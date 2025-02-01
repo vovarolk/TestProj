@@ -4,18 +4,21 @@ import org.apache.commons.cli.*;
 
 import java.io.*;
 import java.nio.file.Files;
+import java.nio.file.NoSuchFileException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-//TODO добавить обработку ошибок
-// добавить документацию
-// Пересмотреть структуру программы в классе не должно быть вывода сообщений
+
+/**
+ * Класс сортировки строк типа integer, float, string по соответствующим текстовым файлам из одного или нескольких файлов формата *.txt
+ * @autor Володя Аникаев
+ * @version 0.3
+ */
 
 public class FileStringSorter {
-
-    // cons названия файлов, сообщение вывода,
 
     private static final String NameOutFileString  = "strings.txt";
     private static final String NameOutFileInt  = "integers.txt";
@@ -24,11 +27,14 @@ public class FileStringSorter {
 
 
     private ArrayList<String> nameInputFiles;
-    private String prefixOutFiles, pathOutFiles/*не забыть добавление /*/;//Нужны гет и сет
-    private boolean append, fullStat, shortStat; //Нужны гет и сет
+    private String prefixOutFiles, pathOutFiles;
+    private boolean append, fullStat, shortStat;
 
     private Pattern patternInt, PatternFloat;
 
+    /**
+     * Конструктор - создание нового объекта
+     */
     public FileStringSorter() {
         nameInputFiles = new ArrayList<>();
         prefixOutFiles = "";
@@ -41,7 +47,6 @@ public class FileStringSorter {
     }
 
     //гетеры и сетеры
-    //boolean append, String prefixOutFile, pathOutFile
 
     public boolean getAppend() {return append;}
     public String getPrefixOutFiles() {return prefixOutFiles;}
@@ -59,115 +64,39 @@ public class FileStringSorter {
         this.pathOutFiles = pathOutFiles+"/";
     }
 
-
-    //******
-
     public void AddNameInputFile(String nameInputFile){
         nameInputFiles.add(nameInputFile);
     }
 
-    //создать конструкторы с параметрами
 
-    public String Sort(){//распределение по сортировки в зависимости от флага
+    public String Sort(){
         String message = PatternOutMessage;
 
 
-        //TODO Оганичение на оба 1 и оба 0
         if (fullStat && shortStat)  message += "Выбраны два варианта показа статистики, будет показана полная статистика \n";
         message += SortWithStatistic();
 
 
         return (message);
-        //TODO возврат сообщения а не печать
-
-        // FIXME очень не нравится, что для двух похожих статистик используются два разных метода
-        //  пересмотреть SortWithNotFullStatistic и SortWithFullStatistic
-        //  добавить if на операции полной статистики
     }
 
-    private String SortWithNotFullStatistic(){//сортировка и сборка сообщения с крвткой статистикой
+
+    private String SortWithStatistic(){
         String SortMessage = "";
         int countString = 0, countFloat=0, countInt=0;
-        //Создание ридеров файлов
         ArrayList<BufferedReader> readers = new ArrayList<>();
 
 
         for(String nameInputFile : nameInputFiles){
             try {
                 readers.add(Files.newBufferedReader(Paths.get(nameInputFile)));
-
+            } catch (NoSuchFileException e) {
+                System.out.println("Ошибка открытия файла "+ nameInputFile + " Такого файла не существует. Пожалуйста, проверьте правильность написания имени файла и его наличие.");
+                nameInputFiles = ParseFilesName(ReadFilesName());
+                return(SortWithStatistic());
             } catch (IOException e) {
                 e.printStackTrace();
             }
-
-        }
-
-        String bufferString ="", bufferInt = "", bufferFloat="";
-        int i =0;
-
-        while (readers.size()!=0){
-            String line;
-            try {
-                if( (line = readers.get(i).readLine()) != null){
-                    Matcher matcher = patternInt.matcher(line);
-                    if(matcher.matches()){
-                        countInt++;
-                        bufferInt+=line +"\n";
-                        System.out.println("int - " + line);//заменить на запись в файл
-                    }
-                    else {
-                        matcher = PatternFloat.matcher(line);
-                        if(matcher.matches()) {
-                            bufferFloat+=line +"\n";
-                            countFloat++;
-                            System.out.println("float - " + line);//заменить на запись в файл
-                        }
-                        else {
-                            countString++;
-                            bufferString+=line +"\n";
-                            System.out.println("string - " + line);//заменить на запись в файл
-                        }
-                    }
-
-                }
-                else{
-                    readers.remove(i);
-                    i--;
-                }
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-            if(i!=(readers.size()-1)) i++; else i=0;
-
-        }
-
-        if (bufferInt != "") WriteFile(bufferInt, (pathOutFiles + prefixOutFiles + NameOutFileInt));
-        if (bufferFloat != "") WriteFile(bufferFloat, (pathOutFiles + prefixOutFiles + NameOutFileFloat));
-        if (bufferString != "") WriteFile(bufferString, (pathOutFiles + prefixOutFiles + NameOutFileString));
-
-
-        SortMessage += "В файле "+ prefixOutFiles + NameOutFileFloat+ " добавлено " + countFloat + " элементов типа Float\n";
-        SortMessage += "В файле "+ prefixOutFiles + NameOutFileString + " добавлено " + countString + " элементов типа String\n";
-        SortMessage += "В файле "+ prefixOutFiles + NameOutFileInt + " добавлено " + countInt + " элементов типа Integer\n";
-        return SortMessage;
-    }
-
-    private String SortWithStatistic(){ //сортировка и сборка сообщения с полной статистикой
-        String SortMessage = "";
-        int countString = 0, countFloat=0, countInt=0;
-        //Создание ридеров файлов
-        ArrayList<BufferedReader> readers = new ArrayList<>();
-
-
-        for(String nameInputFile : nameInputFiles){
-            try {
-                readers.add(Files.newBufferedReader(Paths.get(nameInputFile)));
-
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
         }
 
         String bufferString ="", bufferInt = "", bufferFloat="";
@@ -329,7 +258,8 @@ public class FileStringSorter {
 
             if (commandLine.hasOption("p")) {
                 String[] arg = commandLine.getOptionValues("p");
-                prefixOutFiles = arg[0];
+
+                prefixOutFiles = PrefixAnalysis(arg[0]);
             }
 
             if (commandLine.hasOption("o")) {
@@ -365,6 +295,10 @@ public class FileStringSorter {
                 files.add(t);
         }
 
+        if(files.isEmpty()) {
+            System.out.println("Ошибка чтения имен  файлов. Не указаны имена входных файлов. Для работы программы требуется хотяя бы одно имя файла,");
+            return ParseFilesName(ReadFilesName());
+        }
 
         return files;
     }
@@ -375,6 +309,55 @@ public class FileStringSorter {
         option.setOptionalArg(OptionalArg);// являются ли аргументы необязательными для ввода, по умолчанию аргументы обязательны для ввода, так что эту строчку можно было опутить
         option.setArgName(("Arg_" + description));//
         return option;
+    }
+
+    private String[] ReadFilesName(){
+        Scanner in = new Scanner(System.in);
+        System.out.println("Введите имена файлов в формате \" FileName.txt \", в названии файла не должно содержаться спецсимволов. ");
+        System.out.println("Для завершения работы программы введите \" exit \" ");
+        System.out.println("");
+        String inputString = in.nextLine();
+        //String inputString = "in1.txt in2.txt" ;
+        String[] splitStr = inputString.split(" ");
+        for (String temp : splitStr){
+            if(temp.contains("exit")) System.exit(0);
+
+
+        }
+        return(splitStr);
+    }
+
+    private boolean WildcardCheck (String str){
+        if (str.contains("/")) return true;
+        if (str.contains("\\")) return true;
+        if (str.contains("|")) return true;
+        if (str.contains(":")) return true;
+        if (str.contains("*")) return true;
+        if (str.contains("\"")) return true;
+        if (str.contains("<")) return true;
+        if (str.contains(">")) return true;
+        //
+        return false;
+    }
+
+    private String PrefixAnalysis(String prefix){
+        if(WildcardCheck(prefix)){
+            System.out.println("Ошибка в префиксе выходных файлов! Префикс не должен содержать спецсимволы (/, \\, |, :, *, \", <, >)");
+            return (PrefixAnalysis(ReadPrefixOutFiles()));
+        }
+        else return prefix;
+    }
+
+    private String ReadPrefixOutFiles(){
+        Scanner in = new Scanner(System.in);
+        System.out.println("Введите префикс выходных файлов. Префикс не должен содержать спецсимволы (/, \\, |, :, *, \", <, >). ");
+        System.out.println("Для завершения работы программы введите \" exit \" ");
+        System.out.println("");
+        String inputString = in.nextLine();
+        //String inputString = "in1.txt in2.txt" ;
+        if(inputString.contains("exit")) System.exit(0);
+
+        return(inputString);
     }
 
 }

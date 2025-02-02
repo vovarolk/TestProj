@@ -15,7 +15,7 @@ import java.util.regex.Pattern;
 /**
  * Класс сортировки строк типа integer, float, string по соответствующим текстовым файлам из одного или нескольких файлов формата *.txt
  * @autor Володя Аникаев
- * @version 0.3
+ * @version 0.4
  */
 
 public class FileStringSorter {
@@ -30,7 +30,7 @@ public class FileStringSorter {
     private String prefixOutFiles, pathOutFiles;
     private boolean append, fullStat, shortStat;
 
-    private Pattern patternInt, PatternFloat;
+    private Pattern patternInt, PatternFloat, PatternFloatMinus, PatternFloatMinusE, PatternFloatE;
 
     /**
      * Конструктор - создание нового объекта
@@ -40,8 +40,8 @@ public class FileStringSorter {
         prefixOutFiles = "";
         pathOutFiles ="";
         append = false;
-        patternInt = Pattern.compile("\\d+");
-        PatternFloat = Pattern.compile("\\d+(\\.\\d+)?");
+        patternInt = Pattern.compile("-?\\d{1,10}");
+        PatternFloatMinusE = Pattern.compile("-?\\d{1,40}(\\.\\d+)?(E-?\\d{1,2})?");
         fullStat = false;
         shortStat = false;
     }
@@ -110,7 +110,7 @@ public class FileStringSorter {
             try {
                 if( (line = readers.get(i).readLine()) != null){
                     Matcher matcher = patternInt.matcher(line);
-                    if(matcher.matches()){
+                    if(matcher.matches()&& (Long.parseLong(line) < Integer.MAX_VALUE)){
                         countInt++;
                         bufferInt+=line +"\n";
                         if(fullStat) {
@@ -120,10 +120,11 @@ public class FileStringSorter {
                         }
                     }
                     else {
-                        matcher = PatternFloat.matcher(line);
-                        if(matcher.matches()) {
+                        matcher = PatternFloatMinusE.matcher(line);//патерн не учитывает 1.528535047E-25 -0.001
+                        if(matcher.matches() && (!Float.isInfinite(Float.parseFloat(line)))) {
                             countFloat++;
                             bufferFloat+=line +"\n";
+                            float test = Float.parseFloat(line);
                             if(fullStat) {
                                 if (Float.parseFloat(line) > maxFloat) maxFloat = Float.parseFloat(line);
                                 if (Float.parseFloat(line) < minFloat) minFloat = Float.parseFloat(line);
@@ -258,13 +259,14 @@ public class FileStringSorter {
 
             if (commandLine.hasOption("p")) {
                 String[] arg = commandLine.getOptionValues("p");
-
-                prefixOutFiles = PrefixAnalysis(arg[0]);
+                if (arg == null) prefixOutFiles = "";
+                else prefixOutFiles = PrefixAnalysis(arg[0]);
             }
 
             if (commandLine.hasOption("o")) {
                 String[] arg = commandLine.getOptionValues("o");
-                pathOutFiles = arg[0] + "/";
+                if (arg == null) pathOutFiles = "";
+                else pathOutFiles = PathAnalyzes(arg[0]) + "/";
             }
 
             if (commandLine.hasOption("a")) {
@@ -341,6 +343,7 @@ public class FileStringSorter {
     }
 
     private String PrefixAnalysis(String prefix){
+
         if(WildcardCheck(prefix)){
             System.out.println("Ошибка в префиксе выходных файлов! Префикс не должен содержать спецсимволы (/, \\, |, :, *, \", <, >)");
             return (PrefixAnalysis(ReadPrefixOutFiles()));
@@ -355,6 +358,30 @@ public class FileStringSorter {
         System.out.println("");
         String inputString = in.nextLine();
         //String inputString = "in1.txt in2.txt" ;
+        if(inputString.contains("exit")) System.exit(0);
+
+        return(inputString);
+    }
+
+    private String PathAnalyzes(String path){
+            File f = new File(path);
+            if (!f.exists()) {
+                System.out.println("Ошибка директории. Данный путь не существует.");
+                return (PathAnalyzes(ReadPathOutFiles()));
+            } else if (!f.isDirectory()) {
+                System.out.println("Ошибка директории. Путь к файлу является файлом.");
+                return (PathAnalyzes(ReadPathOutFiles()));
+            }
+
+        return (path);
+    }
+
+    private String ReadPathOutFiles(){
+        Scanner in = new Scanner(System.in);
+        System.out.println("Введите путь выходных файлов.  ");
+        System.out.println("Для завершения работы программы введите \" exit \" ");
+        System.out.println("");
+        String inputString = in.nextLine();
         if(inputString.contains("exit")) System.exit(0);
 
         return(inputString);

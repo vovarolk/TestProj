@@ -1,19 +1,28 @@
 package com.company;
 
+import com.company.Statistic.StatisticParametrsInt;
 import org.apache.commons.cli.*;
+
+import java.io.UnsupportedEncodingException;
 
 public class Main {
 
-    public static void main(String[] args) {
-	    //Р°РЅР°Р»РёР· РІРІРѕРґР° РїРѕР»СЊР·РѕРІР°С‚РµР»СЏ
+    public static void main(String[] args)  {
+	    //анализ ввода пользователя
+        ParserSortingParameters parser = new ParserSortingParameters(args);
+        SortingParameters parameters = parser.getParameters();
 
-        float g = (float) 1E+25;
-        System.out.println(g);
-        FileStringSorter fs = new FileStringSorter();
 
-        fs.ParseString(args);
+        FileStringSorter fs = new FileStringSorter(parameters);
 
-        System.out.println(fs.Sort());
+
+        System.out.println(fs.SortWithMassage());
+
+
+        //TODO сделать чистый код (разбить атомарно функции, добавить класс, сделать все чиаемым)
+
+
+        //TODO класс статистики сортировка файлоа
 
 
     }

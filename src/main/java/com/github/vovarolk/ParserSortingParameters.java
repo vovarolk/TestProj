@@ -1,15 +1,17 @@
-package com.company;
+package com.github.vovarolk;
 
 import org.apache.commons.cli.*;
 
 import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+/**
+ * Класс парсера параметров статистики
+ **/
+
 
 public class ParserSortingParameters {
 
@@ -23,8 +25,7 @@ public class ParserSortingParameters {
         return parameters;
     }
 
-    private SortingParameters parameterParsingFromString(String[] parsedStrings){
-
+    private SortingParameters parameterParsingFromString(String[] parsedStrings) {
         String prefixOutFiles = "";
         String pathOutFiles = "";
 
@@ -40,9 +41,9 @@ public class ParserSortingParameters {
         options.addOption(makeOption("s", false, true, 0, "ShortSt"));
         options.addOption(makeOption("f", false, true, 0, "FullSt"));
 
-        CommandLineParser Parser = new PosixParser();// создаем Posix парсер
+        CommandLineParser Parser = new PosixParser();
         try {
-            CommandLine commandLine = Parser.parse(options, parsedStrings);// парсим командную строку
+            CommandLine commandLine = Parser.parse(options, parsedStrings);
 
             if (commandLine.hasOption("p")) {
                 String[] arg = commandLine.getOptionValues("p");
@@ -63,7 +64,6 @@ public class ParserSortingParameters {
             if (commandLine.hasOption("f")) {
                 fullStat = true;
             }
-
         } catch (ParseException e) {
             e.printStackTrace();
         }
@@ -74,12 +74,12 @@ public class ParserSortingParameters {
         return parameters;
     }
 
-    private ArrayList<String> parseFilesName(String[] str){
+    private ArrayList<String> parseFilesName(String[] str) {
         ArrayList<String> files = new ArrayList<>();
         Pattern pattern = Pattern.compile(".+\\.txt");
-        for (String substring : str){
+        for (String substring : str) {
             Matcher matcher = pattern.matcher(substring);
-            if(matcher.matches()){
+            if (matcher.matches()) {
                 if (fileExistsCheck(substring)) files.add(substring);
                 else {
                     System.err.println("Ошибка имени входного файла. Файла " + substring + "не существует");
@@ -89,45 +89,42 @@ public class ParserSortingParameters {
 
         }
 
-        if(files.isEmpty()) {
-            System.err.println("Ошибка чтения имен файлов. Не указаны имена входных файлов. Для работы программы требуется хотяя бы одно имя файла,");
+        if (files.isEmpty()) {
+            System.err.println("Ошибка чтения имен файлов. Не указаны имена входных файлов. Для работы программы требуется хотя бы одно имя файла,");
             return parseFilesName(forcedReadInputFiles());
         }
 
         return files;
     }
 
-    public boolean fileExistsCheck(String nameFile){
+    public boolean fileExistsCheck(String nameFile) {
         File file = new File(nameFile);
-        if(file.exists()) return true;
-          else return false;
-
-
+        return file.exists();
     }
 
-    private Option makeOption(String opt, boolean hasArg, boolean OptionalArg, int countArg, String description){
-        Option option = new Option(opt, hasArg, description);//конструктор опции
-        option.setArgs(countArg); // число аргументов в опции
-        option.setOptionalArg(OptionalArg);// являются ли аргументы необязательными для ввода, по умолчанию аргументы обязательны для ввода, так что эту строчку можно было опутить
+    private Option makeOption(String opt, boolean hasArg, boolean OptionalArg, int countArg, String description) {
+        Option option = new Option(opt, hasArg, description);
+        option.setArgs(countArg);
+        option.setOptionalArg(OptionalArg);
         option.setArgName(("Arg_" + description));//
         return option;
     }
 
-    private String[] forcedReadInputFiles(){
+    private String[] forcedReadInputFiles() {
         Scanner in = new Scanner(System.in);
         System.out.println("Пожалуйста, введите имена файлов в формате \" FileName.txt \", в названии файла не должно содержаться спецсимволов. ");
         System.out.println("Для завершения работы программы введите \" exit \" ");
-        System.out.println("");
+        System.out.println();
         String inputString = in.nextLine();
         String[] newStr = inputString.split(" ");
-        for (String temp : newStr){
-            if(temp.contains("exit")) System.exit(0);
+        for (String temp : newStr) {
+            if (temp.contains("exit")) System.exit(0);
         }
-        return(newStr);
+        return (newStr);
     }
 
 
-    private boolean serviceСharacterCheck (String str){
+    private boolean serviceСharacterCheck(String str) {
         if (str.contains("/")) return true;
         if (str.contains("\\")) return true;
         if (str.contains("|")) return true;
@@ -135,34 +132,31 @@ public class ParserSortingParameters {
         if (str.contains("*")) return true;
         if (str.contains("\"")) return true;
         if (str.contains("<")) return true;
-        if (str.contains(">")) return true;
-        //
-        return false;
+        return str.contains(">");
     }
 
-    private String prefixAnalysis(String prefix){
-
-        while (serviceСharacterCheck(prefix)){
+    private String prefixAnalysis(String prefix) {
+        while (serviceСharacterCheck(prefix)) {
             System.err.println("Ошибка в префиксе выходных файлов! Префикс не должен содержать спецсимволы (/, \\, |, :, *, \", <, >)");
             prefix = readPrefixOutFiles();
         }
-       return prefix;
+        return prefix;
     }
 
-    private String readPrefixOutFiles(){
+    private String readPrefixOutFiles() {
         System.out.println("Введите префикс выходных файлов. Префикс не должен содержать спецсимволы (/, \\, |, :, *, \", <, >). ");
         System.out.println("Для завершения работы программы введите \" exit \" ");
-        System.out.println("");
+        System.out.println();
         Scanner in = new Scanner(System.in);
         String inputString = in.nextLine();
-        if(inputString.contains("exit")) System.exit(0);
-        return(inputString);
+        if (inputString.contains("exit")) System.exit(0);
+        return (inputString);
     }
 
-    private String pathAnalyzes(String path){
+    private String pathAnalyzes(String path) {
         File f = new File(path);
 
-        while (!f.isDirectory()){
+        while (!f.isDirectory()) {
             path = readPathOutFiles();
             f = new File(path);
         }
@@ -170,16 +164,14 @@ public class ParserSortingParameters {
         return (path);
     }
 
-    private String readPathOutFiles(){
-
+    private String readPathOutFiles() {
         System.out.println("Введите путь выходных файлов.  ");
         System.out.println("Для завершения работы программы введите \" exit \" ");
-        System.out.println("");
+        System.out.println();
         Scanner in = new Scanner(System.in);
         String inputString = in.nextLine();
-        if(inputString.contains("exit")) System.exit(0);
-
-        return(inputString);
+        if (inputString.contains("exit")) System.exit(0);
+        return (inputString);
     }
 
 }

@@ -1,13 +1,15 @@
-package com.company;
+package com.github.vovarolk;
 
 import java.util.ArrayList;
-import java.util.regex.Pattern;
 
+/**
+ * Класс параметров необходимых для сортировки текстовых файлов.
+ **/
 public class SortingParameters {
 
-    public static final String STRINGS_FILE_DEFAULT_NAME  = "strings.txt";
-    public static final String INTEGERS_FILE_DEFAULT_NAME  = "integers.txt";
-    public static final String FLOATS_FILE_DEFAULT_NAME  = "floats.txt";
+    public static final String STRINGS_FILE_DEFAULT_NAME = "strings.txt";
+    public static final String INTEGERS_FILE_DEFAULT_NAME = "integers.txt";
+    public static final String FLOATS_FILE_DEFAULT_NAME = "floats.txt";
 
     private final ArrayList<String> inputFilesName;
     private final String prefixOutFiles;
@@ -19,7 +21,7 @@ public class SortingParameters {
     public SortingParameters() {
         inputFilesName = new ArrayList<>();
         prefixOutFiles = "";
-        pathOutFiles ="";
+        pathOutFiles = "";
         append = false;
         fullStat = false;
         shortStat = false;
@@ -35,12 +37,22 @@ public class SortingParameters {
     }
 
 
-    public boolean isAppend() {return append;}
-    public String getPrefixOutFiles() {return prefixOutFiles;}
-    public String getPathOutFiles() {return pathOutFiles;}
+    public boolean isAppend() {
+        return append;
+    }
+
+    public String getPrefixOutFiles() {
+        return prefixOutFiles;
+    }
+
+    public String getPathOutFiles() {
+        return pathOutFiles;
+    }
+
     public boolean isShortStat() {
         return shortStat;
     }
+
     public boolean isFullStat() {
         return fullStat;
     }

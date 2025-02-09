@@ -1,24 +1,21 @@
 package com.github.vovarolk.Statistic;
 
 /**
- * Класс параметров по которым выводится статистика для типа String
+ * РљР»Р°СЃСЃ РїР°СЂР°РјРµС‚СЂРѕРІ РїРѕ РєРѕС‚РѕСЂС‹Рј РІС‹РІРѕРґРёС‚СЃСЏ СЃС‚Р°С‚РёСЃС‚РёРєР° РґР»СЏ С‚РёРїР° String
  **/
 
-public class StatisticParametrsString {
-    public static final String NAME_TYPE = "String";
+public class StringStatistic {
+    public static final String TYPE_NAME = "String";
+    private int count;
+    private int maxValue;
+    private int minValue;
+    private final String fileName;
 
-
-    protected int count;
-    protected int maxValue;
-    protected int minValue;
-    protected String nameFile;
-
-
-    public StatisticParametrsString(String nameFile) {
+    public StringStatistic(String nameFile) {
         count = 0;
         maxValue = Integer.MIN_VALUE;
         minValue = Integer.MAX_VALUE;
-        this.nameFile = nameFile;
+        this.fileName = nameFile;
     }
 
     public int getCount() {
@@ -34,7 +31,7 @@ public class StatisticParametrsString {
     }
 
     public String getNameFile() {
-        return nameFile;
+        return fileName;
     }
 
     public void setMaxValue(int maxValue) {
@@ -45,7 +42,7 @@ public class StatisticParametrsString {
         this.minValue = minValue;
     }
 
-    public void incriminationCount() {
+    public void inceremenCount() {
         count++;
     }
 

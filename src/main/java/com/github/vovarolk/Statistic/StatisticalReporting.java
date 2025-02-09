@@ -1,29 +1,19 @@
 package com.github.vovarolk.Statistic;
 
-import com.github.vovarolk.SortingParameters;
-
 /**
- * Класс статистики по сортировке файлов. Включает в себя полную и сокращенную статистику.
+ * РљР»Р°СЃСЃ СЃС‚Р°С‚РёСЃС‚РёРєРё РїРѕ СЃРѕСЂС‚РёСЂРѕРІРєРµ С„Р°Р№Р»РѕРІ. Р’РєР»СЋС‡Р°РµС‚ РІ СЃРµР±СЏ РїРѕР»РЅСѓСЋ Рё СЃРѕРєСЂР°С‰РµРЅРЅСѓСЋ СЃС‚Р°С‚РёСЃС‚РёРєСѓ.
  **/
 public class StatisticalReporting {
 
-    private static final String SHORT_STATISTIC_MESSAGE = "В файле \"%s\" добавлено %d элементов типа %s." + System.lineSeparator();
-    private static final String FULL_STATISTIC_NUMBER_SUPPLEMENT = " наибольший - %s," + System.lineSeparator() + " наименьший - %s," + System.lineSeparator() + " среднее значение - %f," + System.lineSeparator() + " сумма элементов - %s" + System.lineSeparator();
-    private static final String FULL_STATISTIC_STRING_SUPPLEMENT = " длина наименьшей строки - %s," + System.lineSeparator() + " длина наибольшей строки - %s," + System.lineSeparator();
+    private static final String SHORT_STATISTIC_MESSAGE = "Р’ С„Р°Р№Р»Рµ \"%s\" РґРѕР±Р°РІР»РµРЅРѕ %d СЌР»РµРјРµРЅС‚РѕРІ С‚РёРїР° %ss." + System.lineSeparator();
+    private static final String FULL_STATISTIC_NUMBER_SUPPLEMENT = " РЅР°РёР±РѕР»СЊС€РёР№ - %s," + System.lineSeparator() + " РЅР°РёРјРµРЅСЊС€РёР№ - %s," + System.lineSeparator() + " СЃСЂРµРґРЅРµРµ Р·РЅР°С‡РµРЅРёРµ - %s," + System.lineSeparator() + " СЃСѓРјРјР° СЌР»РµРјРµРЅС‚РѕРІ - %s" + System.lineSeparator();
+    private static final String FULL_STATISTIC_STRING_SUPPLEMENT = " РґР»РёРЅР° РЅР°РёРјРµРЅСЊС€РµР№ СЃС‚СЂРѕРєРё - %s," + System.lineSeparator() + " РґР»РёРЅР° РЅР°РёР±РѕР»СЊС€РµР№ СЃС‚СЂРѕРєРё - %s," + System.lineSeparator();
 
+    SortingResult sortingResult;
 
-    StatisticParametrsInt parametrsInt;
-    StatisticParametrsFloat parametrsFloat;
-    StatisticParametrsString parametrsString;
-    SortingParameters sortingParametrs;
-
-    public StatisticalReporting(StatisticParametrsInt parametrsInt, StatisticParametrsFloat parametrsFloat, StatisticParametrsString parametrsString, SortingParameters sortingParametrs) {
-        this.parametrsInt = parametrsInt;
-        this.parametrsFloat = parametrsFloat;
-        this.parametrsString = parametrsString;
-        this.sortingParametrs = sortingParametrs;
+    public StatisticalReporting(SortingResult sortingResult) {
+        this.sortingResult = sortingResult;
     }
-
 
     public String getFullStatistic() {
         String message = getFullStatisticInteger() + "\n";
@@ -33,34 +23,38 @@ public class StatisticalReporting {
     }
 
     public String getShortStatistic() {
-        String message = getShortTypeStatistic(parametrsInt.getNameFile(), parametrsInt.getCount(), StatisticParametrsInt.NAME_TYPE);
-        message += getShortTypeStatistic(parametrsFloat.getNameFile(), parametrsFloat.getCount(), StatisticParametrsFloat.NAME_TYPE);
-        message += getShortTypeStatistic(parametrsString.getNameFile(), parametrsString.getCount(), StatisticParametrsString.NAME_TYPE);
+        String message = getShortTypeStatistic(sortingResult.getIntStatistic().getFileName(), sortingResult.getIntStatistic().getCount(), IntStatistic.TYPE_NAME);
+        message += getShortTypeStatistic(sortingResult.getFloatStatistic().getFileName(), sortingResult.getFloatStatistic().getCount(), FloatStatistic.TYPE_NAME);
+        message += getShortTypeStatistic(sortingResult.getStringStatistic().getNameFile(), sortingResult.getStringStatistic().getCount(), StringStatistic.TYPE_NAME);
         return (message);
     }
 
+    private String getShortTypeStatistic(String nameOutFile, int countLinesType, String nameType) {
+        return ( String.format(SHORT_STATISTIC_MESSAGE, nameOutFile, countLinesType, nameType));
+    }
+
     private String getFullStatisticInteger() {
-        String shortStatistic = getShortTypeStatistic(parametrsInt.getNameFile(), parametrsInt.getCount(), StatisticParametrsInt.NAME_TYPE);
-        String supplement = String.format(FULL_STATISTIC_NUMBER_SUPPLEMENT, parametrsInt.getMaxValue(), parametrsInt.getMinValue(), parametrsInt.getAvarage(), parametrsInt.getSum());
+        if(sortingResult.getIntStatistic().getCount()  == 0)
+            return getShortTypeStatistic(sortingResult.getIntStatistic().getFileName(), sortingResult.getIntStatistic().getCount(), IntStatistic.TYPE_NAME);
+        String shortStatistic = getShortTypeStatistic(sortingResult.getIntStatistic().getFileName(), sortingResult.getIntStatistic().getCount(), IntStatistic.TYPE_NAME);
+        String supplement = String.format(FULL_STATISTIC_NUMBER_SUPPLEMENT, sortingResult.getIntStatistic().getMaxValue(), sortingResult.getIntStatistic().getMinValue(), sortingResult.getIntStatistic().getAvarage(), sortingResult.getIntStatistic().getSum());
         return (shortStatistic + supplement);
     }
 
-    private String getShortTypeStatistic(String nameOutFile, int countLinesType, String nameType) {
-        String str = String.format(SHORT_STATISTIC_MESSAGE, nameOutFile, countLinesType, nameType);
-        return (str);
-    }
-
-
     private String getFullStatisticFloat() {
-        String shortStatistic = getShortTypeStatistic(parametrsFloat.getNameFile(), parametrsFloat.getCount(), StatisticParametrsFloat.NAME_TYPE);
-        String supplement = String.format(FULL_STATISTIC_NUMBER_SUPPLEMENT, parametrsFloat.getMaxValue(), parametrsFloat.getMinValue(), parametrsFloat.getAvarage(), parametrsFloat.getSum());
+        if(sortingResult.getFloatStatistic().getCount()  == 0)
+            return getShortTypeStatistic(sortingResult.getFloatStatistic().getFileName(), sortingResult.getFloatStatistic().getCount(), FloatStatistic.TYPE_NAME);
+        String shortStatistic = getShortTypeStatistic(sortingResult.getFloatStatistic().getFileName(), sortingResult.getFloatStatistic().getCount(), FloatStatistic.TYPE_NAME);
+        String supplement = String.format(FULL_STATISTIC_NUMBER_SUPPLEMENT, sortingResult.getFloatStatistic().getMaxValue(), sortingResult.getFloatStatistic().getMinValue(), sortingResult.getFloatStatistic().getAvarage(), sortingResult.getFloatStatistic().getSum());
         return (shortStatistic + supplement);
     }
 
 
     private String getFullStatisticString() {
-        String shortStatistic = getShortTypeStatistic(parametrsString.getNameFile(), parametrsString.getCount(), StatisticParametrsString.NAME_TYPE);
-        String supplement = String.format(FULL_STATISTIC_STRING_SUPPLEMENT, parametrsString.getMaxValue(), parametrsString.getMinValue());
+        if(sortingResult.getStringStatistic().getCount()  == 0)
+            return getShortTypeStatistic(sortingResult.getStringStatistic().getNameFile(), sortingResult.getStringStatistic().getCount(), StringStatistic.TYPE_NAME);
+        String shortStatistic = getShortTypeStatistic(sortingResult.getStringStatistic().getNameFile(), sortingResult.getStringStatistic().getCount(), StringStatistic.TYPE_NAME);
+        String supplement = String.format(FULL_STATISTIC_STRING_SUPPLEMENT, sortingResult.getStringStatistic().getMaxValue(), sortingResult.getStringStatistic().getMinValue());
         return (shortStatistic + supplement);
     }
 

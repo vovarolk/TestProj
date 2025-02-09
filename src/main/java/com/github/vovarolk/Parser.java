@@ -9,15 +9,15 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * Класс парсера параметров статистики
+ * РљР»Р°СЃСЃ РїР°СЂСЃРµСЂР° РїР°СЂР°РјРµС‚СЂРѕРІ СЃС‚Р°С‚РёСЃС‚РёРєРё
  **/
 
 
-public class ParserSortingParameters {
+public class Parser {
 
     private final SortingParameters parameters;
 
-    public ParserSortingParameters(String[] processingString) {
+    public Parser(String[] processingString) {
         parameters = parameterParsingFromString(processingString);
     }
 
@@ -41,9 +41,9 @@ public class ParserSortingParameters {
         options.addOption(makeOption("s", false, true, 0, "ShortSt"));
         options.addOption(makeOption("f", false, true, 0, "FullSt"));
 
-        CommandLineParser Parser = new PosixParser();
+        CommandLineParser parser = new DefaultParser();
         try {
-            CommandLine commandLine = Parser.parse(options, parsedStrings);
+            CommandLine commandLine = parser.parse(options, parsedStrings);
 
             if (commandLine.hasOption("p")) {
                 String[] arg = commandLine.getOptionValues("p");
@@ -70,8 +70,7 @@ public class ParserSortingParameters {
 
         ArrayList<String> inputFilesName;
         inputFilesName = parseFilesName(parsedStrings);
-        SortingParameters parameters = new SortingParameters(inputFilesName, prefixOutFiles, pathOutFiles, append, fullStat, shortStat);
-        return parameters;
+        return new SortingParameters(inputFilesName, prefixOutFiles, pathOutFiles, append, fullStat, shortStat);
     }
 
     private ArrayList<String> parseFilesName(String[] str) {
@@ -82,7 +81,7 @@ public class ParserSortingParameters {
             if (matcher.matches()) {
                 if (fileExistsCheck(substring)) files.add(substring);
                 else {
-                    System.err.println("Ошибка имени входного файла. Файла " + substring + "не существует");
+                    System.err.println("РћС€РёР±РєР° РёРјРµРЅРё РІС…РѕРґРЅРѕРіРѕ С„Р°Р№Р»Р°. Р¤Р°Р№Р»Р° " + substring + "РЅРµ СЃСѓС‰РµСЃС‚РІСѓРµС‚");
                     return parseFilesName(forcedReadInputFiles());
                 }
             }
@@ -90,7 +89,7 @@ public class ParserSortingParameters {
         }
 
         if (files.isEmpty()) {
-            System.err.println("Ошибка чтения имен файлов. Не указаны имена входных файлов. Для работы программы требуется хотя бы одно имя файла,");
+            System.err.println("РћС€РёР±РєР° С‡С‚РµРЅРёСЏ РёРјРµРЅ С„Р°Р№Р»РѕРІ. РќРµ СѓРєР°Р·Р°РЅС‹ РёРјРµРЅР° РІС…РѕРґРЅС‹С… С„Р°Р№Р»РѕРІ. Р”Р»СЏ СЂР°Р±РѕС‚С‹ РїСЂРѕРіСЂР°РјРјС‹ С‚СЂРµР±СѓРµС‚СЃСЏ С…РѕС‚СЏ Р±С‹ РѕРґРЅРѕ РёРјСЏ С„Р°Р№Р»Р°,");
             return parseFilesName(forcedReadInputFiles());
         }
 
@@ -112,8 +111,8 @@ public class ParserSortingParameters {
 
     private String[] forcedReadInputFiles() {
         Scanner in = new Scanner(System.in);
-        System.out.println("Пожалуйста, введите имена файлов в формате \" FileName.txt \", в названии файла не должно содержаться спецсимволов. ");
-        System.out.println("Для завершения работы программы введите \" exit \" ");
+        System.out.println("РџРѕР¶Р°Р»СѓР№СЃС‚Р°, РІРІРµРґРёС‚Рµ РёРјРµРЅР° С„Р°Р№Р»РѕРІ РІ С„РѕСЂРјР°С‚Рµ \" FileName.txt \", РІ РЅР°Р·РІР°РЅРёРё С„Р°Р№Р»Р° РЅРµ РґРѕР»Р¶РЅРѕ СЃРѕРґРµСЂР¶Р°С‚СЊСЃСЏ СЃРїРµС†СЃРёРјРІРѕР»РѕРІ. ");
+        System.out.println("Р”Р»СЏ Р·Р°РІРµСЂС€РµРЅРёСЏ СЂР°Р±РѕС‚С‹ РїСЂРѕРіСЂР°РјРјС‹ РІРІРµРґРёС‚Рµ \" exit \" ");
         System.out.println();
         String inputString = in.nextLine();
         String[] newStr = inputString.split(" ");
@@ -124,7 +123,7 @@ public class ParserSortingParameters {
     }
 
 
-    private boolean serviceСharacterCheck(String str) {
+    private boolean serviceCharacterCheck(String str) {
         if (str.contains("/")) return true;
         if (str.contains("\\")) return true;
         if (str.contains("|")) return true;
@@ -136,16 +135,16 @@ public class ParserSortingParameters {
     }
 
     private String prefixAnalysis(String prefix) {
-        while (serviceСharacterCheck(prefix)) {
-            System.err.println("Ошибка в префиксе выходных файлов! Префикс не должен содержать спецсимволы (/, \\, |, :, *, \", <, >)");
+        while (serviceCharacterCheck(prefix)) {
+            System.err.println("РћС€РёР±РєР° РІ РїСЂРµС„РёРєСЃРµ РІС‹С…РѕРґРЅС‹С… С„Р°Р№Р»РѕРІ! РџСЂРµС„РёРєСЃ РЅРµ РґРѕР»Р¶РµРЅ СЃРѕРґРµСЂР¶Р°С‚СЊ СЃРїРµС†СЃРёРјРІРѕР»С‹ (/, \\, |, :, *, \", <, >)");
             prefix = readPrefixOutFiles();
         }
         return prefix;
     }
 
     private String readPrefixOutFiles() {
-        System.out.println("Введите префикс выходных файлов. Префикс не должен содержать спецсимволы (/, \\, |, :, *, \", <, >). ");
-        System.out.println("Для завершения работы программы введите \" exit \" ");
+        System.out.println("Р’РІРµРґРёС‚Рµ РїСЂРµС„РёРєСЃ РІС‹С…РѕРґРЅС‹С… С„Р°Р№Р»РѕРІ. РџСЂРµС„РёРєСЃ РЅРµ РґРѕР»Р¶РµРЅ СЃРѕРґРµСЂР¶Р°С‚СЊ СЃРїРµС†СЃРёРјРІРѕР»С‹ (/, \\, |, :, *, \", <, >). ");
+        System.out.println("Р”Р»СЏ Р·Р°РІРµСЂС€РµРЅРёСЏ СЂР°Р±РѕС‚С‹ РїСЂРѕРіСЂР°РјРјС‹ РІРІРµРґРёС‚Рµ \" exit \" ");
         System.out.println();
         Scanner in = new Scanner(System.in);
         String inputString = in.nextLine();
@@ -155,18 +154,16 @@ public class ParserSortingParameters {
 
     private String pathAnalyzes(String path) {
         File f = new File(path);
-
         while (!f.isDirectory()) {
             path = readPathOutFiles();
             f = new File(path);
         }
-
         return (path);
     }
 
     private String readPathOutFiles() {
-        System.out.println("Введите путь выходных файлов.  ");
-        System.out.println("Для завершения работы программы введите \" exit \" ");
+        System.out.println("Р’РІРµРґРёС‚Рµ РїСѓС‚СЊ РІС‹С…РѕРґРЅС‹С… С„Р°Р№Р»РѕРІ.  ");
+        System.out.println("Р”Р»СЏ Р·Р°РІРµСЂС€РµРЅРёСЏ СЂР°Р±РѕС‚С‹ РїСЂРѕРіСЂР°РјРјС‹ РІРІРµРґРёС‚Рµ \" exit \" ");
         System.out.println();
         Scanner in = new Scanner(System.in);
         String inputString = in.nextLine();

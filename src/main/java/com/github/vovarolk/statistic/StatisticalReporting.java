@@ -1,4 +1,4 @@
-package com.github.vovarolk.Statistic;
+package com.github.vovarolk.statistic;
 
 /**Класс статистики по сортировке файлов. Включает в себя полную и сокращенную статистику.**/
 public class StatisticalReporting {

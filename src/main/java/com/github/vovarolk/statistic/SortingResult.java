@@ -1,4 +1,4 @@
-package com.github.vovarolk.Statistic;
+package com.github.vovarolk.statistic;
 
 /**Класс результатов сортировки данных**/
 public class SortingResult {

@@ -4,6 +4,7 @@ import org.apache.commons.cli.*;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -64,12 +65,12 @@ public class Parser {
             e.printStackTrace();
         }
 
-        ArrayList<String> inputFilesName;
+        List<String> inputFilesName;
         inputFilesName = parseFilesName(parsedStrings);
         return new SortingParameters(inputFilesName, prefixOutFiles, pathOutFiles, append, fullStat, shortStat);
     }
 
-    private ArrayList<String> parseFilesName(String[] str) {
+    private List<String> parseFilesName(String[] str) {
         ArrayList<String> files = new ArrayList<>();
         Pattern pattern = Pattern.compile(".+\\.txt");
         for (String substring : str) {
@@ -97,10 +98,10 @@ public class Parser {
         return file.exists();
     }
 
-    private Option makeOption(String opt, boolean hasArg, boolean OptionalArg, int countArg, String description) {
+    private Option makeOption(String opt, boolean hasArg, boolean optionalArg, int countArg, String description) {
         Option option = new Option(opt, hasArg, description);
         option.setArgs(countArg);
-        option.setOptionalArg(OptionalArg);
+        option.setOptionalArg(optionalArg);
         option.setArgName(("Arg_" + description));//
         return option;
     }

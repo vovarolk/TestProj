@@ -1,6 +1,6 @@
 package com.github.vovarolk;
 
-import com.github.vovarolk.Statistic.StatisticalReporting;
+import com.github.vovarolk.statistic.StatisticalReporting;
 
 public class Main {
     private static final String SORT_FINISHED_MESSAGE = "Сортировка прошла успешно!" + System.lineSeparator();

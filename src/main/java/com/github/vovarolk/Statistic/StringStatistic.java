@@ -1,8 +1,6 @@
 package com.github.vovarolk.Statistic;
 
-/**
- * Класс параметров по которым выводится статистика для типа String
- **/
+/**Класс параметров по которым выводится статистика для типа String**/
 
 public class StringStatistic {
     public static final String TYPE_NAME = "String";

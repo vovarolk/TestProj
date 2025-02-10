@@ -11,7 +11,6 @@ public class Main {
 
         FileStringSorter fs = new FileStringSorter(parameters);
         StatisticalReporting report = new StatisticalReporting(fs.sortFiles());
-
         String message = "" + SORT_FINISHED_MESSAGE;
         if (parameters.isFullStat() && parameters.isShortStat())
             message += "Выбраны два варианта показа статистики, будет показана полная статистика" + System.lineSeparator();

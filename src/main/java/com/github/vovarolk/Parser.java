@@ -8,11 +8,7 @@ import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-/**
- * Класс парсера параметров статистики
- **/
-
-
+/**Класс парсера параметров статистики**/
 public class Parser {
 
     private final SortingParameters parameters;

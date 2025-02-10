@@ -2,9 +2,7 @@ package com.github.vovarolk.Statistic;
 
 import java.util.Objects;
 
-/**
- * Класс параметров по которым выводится статистика для типа Integer
- **/
+/**Класс параметров по которым выводится статистика для типа Integer**/
 
 public class IntStatistic {
     public static final String TYPE_NAME = "Integer";

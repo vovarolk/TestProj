@@ -13,8 +13,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 
-/** Класс сортировки строк типа integer, float, string по соответствующим текстовым файлам из одного или нескольких файлов формата *.txt*/
-
+/** Класс сортировки **/
 public class FileStringSorter {
     private final SortingParameters sortingParametrs;
 

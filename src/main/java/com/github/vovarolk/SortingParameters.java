@@ -2,9 +2,7 @@ package com.github.vovarolk;
 
 import java.util.ArrayList;
 
-/**
- * Класс параметров необходимых для сортировки текстовых файлов.
- **/
+/**Класс параметров необходимых для сортировки текстовых файлов.**/
 public class SortingParameters {
     public static final String STRINGS_FILE_DEFAULT_NAME = "strings.txt";
     public static final String INTEGERS_FILE_DEFAULT_NAME = "integers.txt";

@@ -1,8 +1,6 @@
 package com.github.vovarolk.Statistic;
 
-/**
- * Класс статистики по сортировке файлов. Включает в себя полную и сокращенную статистику.
- **/
+/**Класс статистики по сортировке файлов. Включает в себя полную и сокращенную статистику.**/
 public class StatisticalReporting {
 
     private static final String SHORT_STATISTIC_MESSAGE = "В файле \"%s\" добавлено %d элементов типа %ss." + System.lineSeparator();

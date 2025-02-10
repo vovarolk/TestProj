@@ -1,5 +1,6 @@
 package com.github.vovarolk.Statistic;
 
+/**Класс результатов сортировки данных**/
 public class SortingResult {
 
     IntStatistic intStatistic;
